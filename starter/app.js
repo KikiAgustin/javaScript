@@ -8,6 +8,7 @@ const clearButton = document.querySelector("#clear-todos");
 todoForm.addEventListener("submit", addTodo);
 todoList.addEventListener("click", deleteTodo);
 clearButton.addEventListener("click", clearTodos);
+filterInput.addEventListener("keyup", filterTodos);
 
 function addTodo(e) {
     e.preventDefault();
@@ -18,7 +19,7 @@ function addTodo(e) {
         const LI = document.createElement("li");
 
         // Menambahkan sebuah class kedalam elemen LI
-        LI.className = "list-group-item d-flex justify-content-between align-items-center mb-1";
+        LI.className = "todo-item list-group-item d-flex justify-content-between align-items-center mb-1";
 
         // Menambahkan children dari LI/ menambahkan isi dari LI
         LI.appendChild(document.createTextNode(todoInput.value));
@@ -41,12 +42,31 @@ function addTodo(e) {
         // Menambahkan elemen Li yang dibuat didalam javasScript kedalam elemen UL yang ada di HTML
         todoList.appendChild(LI)
 
+        // Menyimpan ke localStorage
+        addTodoLocal(todoInput.value);
+
         // Membersihkan isi inputan
         todoInput.value = "";
 
     } else {
         alert("Anda belum memasukan kalimat apapun");
     }
+
+}
+
+function addTodoLocal(todoInputValue) {
+
+    let todos;
+
+    if (localStorage.getItem("todos") == null) {
+        todos = [];
+    } else {
+        todos = JSON.perse(localStorage.getItem("todos"));
+    }
+
+    todos.push(todoInputValue);
+
+    localStorage.setItem("todos", JSON.stringify(todos));
 
 }
 
@@ -64,4 +84,20 @@ function deleteTodo(e) {
 
 function clearTodos() {
     todoList.innerHTML = "";
+}
+
+function filterTodos(e) {
+    const filterText = e.target.value.toLowerCase();
+    let todoItems = document.querySelectorAll(".todo-item");
+
+    todoItems.forEach((item) => {
+        const itemText = item.firstChild.textContent.toLowerCase();
+
+        if (itemText.indexOf(filterText) != -1) {
+            item.setAttribute("style", "display: block;");
+        } else {
+            item.setAttribute("style", "display: none !important");
+        }
+
+    });
 }

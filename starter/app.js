@@ -4,11 +4,65 @@ const filterInput = document.querySelector("#filter-input");
 const todoList = document.querySelector("#todo-list");
 const clearButton = document.querySelector("#clear-todos");
 
+immediateLoadEventListener();
 
-todoForm.addEventListener("submit", addTodo);
-todoList.addEventListener("click", deleteTodo);
-clearButton.addEventListener("click", clearTodos);
-filterInput.addEventListener("keyup", filterTodos);
+function immediateLoadEventListener() {
+    // Function untuk mengambil data dari localStorage
+    document.addEventListener("DOMContentLoaded", getTodos);
+
+    // Ini adalah event untuk menambah Todo
+    todoForm.addEventListener("submit", addTodo);
+
+    // Ini adalah event untuk menghapus 1 Todo
+    todoList.addEventListener("click", deleteTodo);
+
+    // Ini adalah event untuk menghapus semua Todo
+    clearButton.addEventListener("click", clearTodos);
+
+    // Ini adalah event untu mengfilter Todo
+    filterInput.addEventListener("keyup", filterTodos);
+}
+
+function getTodos() {
+
+    let todos;
+
+    if (localStorage.getItem("todos") == null) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem("todos"));
+    }
+
+    todos.forEach((todo) => {
+        // Menambahkan elemen LI didalam javaScript
+        const LI = document.createElement("li");
+
+        // Menambahkan sebuah class kedalam elemen LI
+        LI.className = "todo-item list-group-item d-flex justify-content-between align-items-center mb-1";
+
+        // Menambahkan children dari LI/ menambahkan isi dari LI
+        LI.appendChild(document.createTextNode(todo));
+
+        // Membuat tombol button
+        const A = document.createElement("a");
+
+        // Menambahkan Properti href di tag a
+        A.href = "#";
+
+        // Menambahkan cildren di tag A
+        A.innerHTML = "Delete";
+
+        // Menambahkan class di tag a
+        A.className = "badge badge-danger delete-todo";
+
+        // Menambahkan tag a kedalam Li
+        LI.appendChild(A);
+
+        // Menambahkan elemen Li yang dibuat didalam javasScript kedalam elemen UL yang ada di HTML
+        todoList.appendChild(LI)
+    });
+
+}
 
 function addTodo(e) {
     e.preventDefault();
@@ -43,7 +97,7 @@ function addTodo(e) {
         todoList.appendChild(LI)
 
         // Menyimpan ke localStorage
-        addTodoLocal(todoInput.value);
+        addTodoLocalStorage(todoInput.value);
 
         // Membersihkan isi inputan
         todoInput.value = "";
@@ -54,14 +108,14 @@ function addTodo(e) {
 
 }
 
-function addTodoLocal(todoInputValue) {
+function addTodoLocalStorage(todoInputValue) {
 
     let todos;
 
     if (localStorage.getItem("todos") == null) {
         todos = [];
     } else {
-        todos = JSON.perse(localStorage.getItem("todos"));
+        todos = JSON.parse(localStorage.getItem("todos"));
     }
 
     todos.push(todoInputValue);
